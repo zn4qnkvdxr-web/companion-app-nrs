@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Structurel de Prompt</title>
+<style>
+
+:root {
+  --scale: 1;
+
+  --n-blue:  #2E7FA3;
+  --n-green: #7AB648;
+  --n-terra: #D85C34;
+
+  /* Fond Bauhaus Clock */
+  --bg:      #EEF0F2;
+  --bg-card: #FFFFFF;
+  --bg-dark: #111111;
+
+  /* Textes — contrastes corrects sur #EEF0F2 */
+  --t1:  #0D0D0D;          /* Titres, labels forts — quasi-noir */
+  --t2:  #3A3A3A;          /* Corps de texte — lisible */
+  --t3:  #6B6B6B;          /* Muted, labels secondaires */
+  --t4:  #9A9A9A;          /* Très muted, règles, séparateurs */
+  --accent: #2E7FA3;
+  --accent-d: #1D6080;
+  --bad:  #C04A1A;
+  --good: #4A8020;
+  --border: rgba(0,0,0,0.1);
+  --border-strong: rgba(0,0,0,0.16);
+  --rule: rgba(0,0,0,0.07);
+
+  --fs-hero:   calc(var(--scale) * clamp(54px, 11.5vw, 112px));
+  --fs-h2:     calc(var(--scale) * clamp(30px, 5.5vw, 58px));
+  --fs-h3:     calc(var(--scale) * clamp(17px, 2.8vw, 24px));
+  --fs-body:   calc(var(--scale) * 14.5px);
+  --fs-small:  calc(var(--scale) * 12.5px);
+  --fs-mono:   calc(var(--scale) * 10.5px);
+  --fs-ticker: calc(var(--scale) * clamp(13px, 1.8vw, 17px));
+
+  --pad-x: clamp(24px, 5vw, 64px);
+  --gap-sec: clamp(72px, 10vw, 120px);
+  --r: 14px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: var(--fs-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(238,240,242,0.92);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+  padding: 12px var(--pad-x);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+
+.rings { width: 26px; height: 26px; position: relative; flex-shrink: 0; }
+.ring { position: absolute; width: 15px; height: 15px; border-radius: 50%; border: 2.5px solid; }
+.ring-g { border-color: var(--n-green); top: 0;   left: 5px; }
+.ring-b { border-color: var(--n-blue);  top: 9px; left: 0; }
+.ring-t { border-color: var(--n-terra); top: 9px; left: 10px; }
+
+.brand-name {
+  font-size: var(--fs-mono);
+  font-weight: 600;
+  color: var(--t3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.scale-ctrl {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.s-btn {
+  background: none;
+  border: none;
+  color: var(--t3);
+  cursor: pointer;
+  padding: 7px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
+}
+.s-btn:hover { background: var(--rule); color: var(--t1); }
+.s-btn:active { transform: scale(0.9); transition-duration: 0.08s; }
+
+.s-sep { width: 1px; height: 16px; background: var(--border); }
+
+.s-val {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 9px;
+  color: var(--t4);
+  padding: 0 8px;
+  letter-spacing: 1px;
+  min-width: 36px;
+  text-align: center;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: clamp(48px,8vw,96px) var(--pad-x) clamp(48px,7vw,80px);
+}
+
+.hero-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: clamp(24px,4vw,40px);
+}
+.hero-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.hero-label-txt {
+  font-size: var(--fs-mono);
+  font-weight: 600;
+  color: var(--t3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-size: var(--fs-hero);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -2.5px;
+  margin-bottom: clamp(32px,5vw,56px);
+}
+
+.hero-title .l1 { display: block; color: var(--t1); }
+.hero-title .l2 { display: block; color: var(--accent); font-style: italic; font-weight: 800; }
+.hero-title .l3 { display: block; color: var(--t4); font-weight: 400; letter-spacing: -1px; font-size: 0.72em; }
+
+.hero-foot {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding-top: clamp(24px,4vw,40px);
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 600px) {
+  .hero-foot { grid-template-columns: 1fr auto; align-items: end; }
+}
+
+.hero-sub {
+  font-size: calc(var(--scale) * clamp(14px,2vw,17px));
+  font-weight: 300;
+  color: var(--t2);
+  max-width: 420px;
+  line-height: 1.8;
+}
+.hero-sub strong { font-weight: 700; color: var(--t1); font-style: italic; }
+
+.hero-meta {
+  font-size: var(--fs-mono);
+  font-weight: 500;
+  color: var(--t4);
+  line-height: 2.2;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+/* ── TICKER ── */
+.ticker-wrap {
+  background: var(--bg-dark);
+  padding: 14px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-track {
+  display: inline-flex;
+  animation: tick 30s linear infinite;
+}
+.ticker-track.rev { animation-direction: reverse; animation-duration: 24s; }
+.ticker-track span {
+  font-size: var(--fs-ticker);
+  font-weight: 600;
+  color: rgba(255,255,255,0.88);
+  padding: 0 20px;
+  letter-spacing: 0.2px;
+}
+.ticker-track .sep { color: rgba(255,255,255,0.25); font-weight: 300; padding: 0 2px; }
+
+@keyframes tick {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── SECTION ── */
+.sec { padding: var(--gap-sec) var(--pad-x); }
+
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.sec-n {
+  font-size: var(--fs-mono);
+  font-weight: 700;
+  color: var(--t4);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.sec-t {
+  font-size: var(--fs-h2);
+  font-weight: 900;
+  color: var(--t1);
+  line-height: 1.0;
+  letter-spacing: -0.8px;
+}
+.sec-t .accent { color: var(--accent); font-style: italic; }
+.sec-rule { flex: 1; height: 1px; background: var(--border); align-self: center; min-width: 20px; }
+
+.sec-intro {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  color: var(--t3);
+  margin-top: 6px;
+  margin-bottom: clamp(28px,4vw,48px);
+  max-width: 480px;
+  line-height: 1.8;
+  font-style: italic;
+}
+
+/* ── ANATOMY ── */
+.anatomy {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 560px) { .anatomy { grid-template-columns: repeat(2,1fr); } }
+@media (min-width: 820px) { .anatomy { grid-template-columns: repeat(3,1fr); } }
+
+.a-card {
+  background: var(--bg-card);
+  border-radius: var(--r);
+  padding: clamp(24px,3vw,36px) clamp(20px,2.5vw,30px) clamp(28px,3.5vw,42px);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05), 0 4px 16px rgba(0,0,0,0.04);
+  cursor: default;
+  transition: transform 0.25s cubic-bezier(.22,1,.36,1), box-shadow 0.25s ease, border-color 0.25s;
+}
+.a-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07), 0 12px 32px rgba(0,0,0,0.08);
+  border-color: var(--border-strong);
+}
+.a-card:active { transform: scale(0.986); transition-duration: 0.1s; }
+
+.a-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--r) var(--r) 0 0;
+  background: var(--card-c, var(--accent));
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+.a-card:hover::before { opacity: 1; }
+
+.a-card:nth-child(1) { --card-c: #2E7FA3; }
+.a-card:nth-child(2) { --card-c: #3A8FA8; }
+.a-card:nth-child(3) { --card-c: #2E7FA3; }
+.a-card:nth-child(4) { --card-c: #3A8FA8; }
+.a-card:nth-child(5) { --card-c: #2E7FA3; }
+.a-card:nth-child(6) { --card-c: #7AB648; }
+
+.a-num {
+  font-size: 90px;
+  font-weight: 900;
+  font-style: italic;
+  line-height: 1;
+  color: var(--t1);
+  opacity: 0.04;
+  position: absolute;
+  bottom: -16px; right: 10px;
+  user-select: none;
+  pointer-events: none;
+  letter-spacing: -4px;
+  transition: opacity 0.2s;
+}
+.a-card:hover .a-num { opacity: 0.07; }
+
+.a-code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--fs-mono);
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.a-name {
+  font-size: var(--fs-h3);
+  font-weight: 800;
+  color: var(--t1);
+  margin-bottom: 6px;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+
+.a-metaphor {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--t3);
+  margin-bottom: 12px;
+  line-height: 1.55;
+}
+
+.a-q {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  color: var(--t2);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+
+.a-ex {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: calc(var(--scale) * 9.5px);
+  color: var(--t3);
+  border-left: 2px solid var(--accent);
+  padding-left: 10px;
+  line-height: 1.8;
+}
+
+/* ── IMPACT ── */
+.impact-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05), 0 4px 16px rgba(0,0,0,0.04);
+  overflow: hidden;
+}
+
+.impact-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .impact-layout { grid-template-columns: 1fr 1fr; }
+}
+
+.impact-left {
+  padding: clamp(28px,4vw,44px) clamp(24px,3vw,36px);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+@media (min-width: 640px) {
+  .impact-left { border-bottom: none; border-right: 1px solid var(--border); }
+}
+
+.impact-quote {
+  font-size: calc(var(--scale) * clamp(14px,2.2vw,20px));
+  font-weight: 300;
+  color: var(--t2);
+  line-height: 1.7;
+}
+.impact-quote strong {
+  font-weight: 800;
+  color: var(--t1);
+  font-style: italic;
+}
+
+.impact-right {
+  padding: clamp(28px,4vw,44px) clamp(24px,3vw,36px);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.i-row { display: flex; flex-direction: column; gap: 10px; }
+
+.i-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.i-lbl {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.i-tag {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: calc(var(--scale) * 9px);
+  font-weight: 500;
+  color: var(--t4);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.i-track {
+  height: 4px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.i-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 2px;
+  transition: width 1.5s cubic-bezier(.22,1,.36,1);
+}
+.f90 { background: var(--t1); }
+.f75 { background: var(--t2); }
+.f65 { background: var(--t3); }
+.f35 { background: var(--t4); }
+
+/* ── POSTURE ── */
+.posture-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 560px) { .posture-grid { grid-template-columns: 1fr 1fr; } }
+
+.p-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: clamp(28px,4vw,40px) clamp(24px,3vw,36px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: transform 0.22s ease, box-shadow 0.22s;
+}
+.p-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07), 0 10px 28px rgba(0,0,0,0.07);
+}
+
+.p-tag {
+  display: inline-block;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: calc(var(--scale) * 9.5px);
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  border: 1px solid;
+}
+.p-tag.bad  { color: var(--bad);  border-color: rgba(192,74,26,0.3);  background: rgba(192,74,26,0.07); }
+.p-tag.good { color: var(--good); border-color: rgba(74,128,32,0.3);  background: rgba(74,128,32,0.07); }
+
+.p-title {
+  font-size: calc(var(--scale) * clamp(22px,3.8vw,34px));
+  font-weight: 900;
+  color: var(--t1);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+}
+
+.p-metaphor {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--t3);
+  margin-bottom: 20px;
+  line-height: 1.65;
+}
+
+.p-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+.p-list li {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  color: var(--t2);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.65;
+}
+.bad  .p-list li::before { content: '—'; position: absolute; left: 0; color: var(--bad); font-weight: 700; }
+.good .p-list li::before { content: '→'; position: absolute; left: 0; color: var(--good); font-weight: 700; }
+
+/* ── BOUCLE ── */
+.boucle-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 640px) { .boucle-grid { grid-template-columns: 1fr 1fr; } }
+
+.steps-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: clamp(24px,3vw,36px) clamp(20px,2.5vw,30px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.b-step {
+  display: flex;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule);
+  cursor: default;
+  transition: padding-left 0.2s ease;
+}
+.b-step:hover { padding-left: 8px; }
+.b-step:first-child { padding-top: 0; }
+.b-step:last-child  { border-bottom: none; padding-bottom: 0; }
+
+.b-n {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--fs-mono);
+  font-weight: 600;
+  color: var(--t4);
+  flex-shrink: 0;
+  padding-top: 3px;
+  letter-spacing: 1px;
+  min-width: 20px;
+}
+
+.b-name {
+  font-size: calc(var(--scale) * clamp(14px,2vw,19px));
+  font-weight: 800;
+  color: var(--t1);
+  margin-bottom: 5px;
+  letter-spacing: -0.2px;
+}
+.b-desc {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  color: var(--t2);
+  line-height: 1.7;
+}
+
+.rules-col { display: flex; flex-direction: column; gap: 10px; }
+
+.rule-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: clamp(22px,3vw,32px) clamp(18px,2.5vw,28px);
+  border-left: 3px solid var(--accent);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  flex: 1;
+}
+
+.rule-lbl {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: calc(var(--scale) * 9.5px);
+  font-weight: 600;
+  color: var(--t3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.rule-txt {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  color: var(--t2);
+  line-height: 1.75;
+}
+
+/* ── EXEMPLES ── */
+.ex-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 560px) { .ex-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 820px) { .ex-grid { grid-template-columns: repeat(3,1fr); } }
+
+.ex-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: clamp(22px,3vw,32px) clamp(18px,2.5vw,28px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: transform 0.22s ease, box-shadow 0.22s;
+}
+.ex-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07), 0 10px 28px rgba(0,0,0,0.07);
+}
+
+.ex-tag {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: calc(var(--scale) * 9.5px);
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.ex-profile {
+  font-size: calc(var(--scale) * 13.5px);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--t1);
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.4;
+}
+
+.ex-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+
+.ex-c {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: calc(var(--scale) * 8.5px);
+  font-weight: 600;
+  color: var(--accent);
+  flex-shrink: 0;
+  padding-top: 2px;
+  min-width: 24px;
+  letter-spacing: 0.5px;
+}
+.ex-v {
+  font-size: var(--fs-small);
+  font-weight: 400;
+  color: var(--t2);
+  line-height: 1.65;
+}
+
+/* ── HORIZON ── */
+.horizon-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: clamp(32px,4vw,52px) clamp(28px,4vw,48px);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  max-width: 580px;
+}
+
+.h-track {
+  position: relative;
+  padding-left: 32px;
+}
+.h-track::before {
+  content: '';
+  position: absolute;
+  left: 5px; top: 6px; bottom: 6px;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--t1), var(--border));
+}
+
+.h-node { padding: 20px 0; position: relative; }
+.h-node:first-child { padding-top: 0; }
+.h-node:last-child  { padding-bottom: 0; }
+
+.h-dot {
+  position: absolute;
+  left: -32px; top: 4px;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  border: 1.5px solid;
+}
+.h-dot.now   { background: var(--t1); border-color: var(--t1); }
+.h-dot.next  { background: transparent; border-color: var(--t3); }
+.h-dot.later { background: transparent; border-color: var(--border); }
+
+.h-status {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--fs-mono);
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.h-status.now   { color: var(--accent); }
+.h-status.next  { color: var(--t4); }
+.h-status.later { color: var(--border); }
+
+.h-lbl {
+  font-size: calc(var(--scale) * clamp(18px,2.8vw,24px));
+  font-weight: 800;
+  color: var(--t1);
+  margin-bottom: 5px;
+  letter-spacing: -0.3px;
+}
+.h-lbl.dim { color: var(--t4); }
+
+.h-desc { font-size: var(--fs-small); font-weight: 400; color: var(--t2); line-height: 1.7; }
+.h-desc.dim { color: var(--t4); font-style: italic; }
+
+.h-caption {
+  font-size: calc(var(--scale) * clamp(13px,2vw,16px));
+  font-weight: 500;
+  font-style: italic;
+  color: var(--t3);
+  margin-top: 36px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  line-height: 1.65;
+}
+
+/* ── FOOTER ── */
+.footer {
+  padding: clamp(40px,6vw,64px) var(--pad-x) clamp(48px,7vw,72px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.f-wordmark {
+  font-size: calc(var(--scale) * clamp(16px,3vw,24px));
+  font-weight: 900;
+  font-style: italic;
+  color: var(--t1);
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+}
+
+.f-chain {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--fs-mono);
+  font-weight: 500;
+  color: var(--t4);
+  letter-spacing: 0.5px;
+  line-height: 2.2;
+}
+.f-chain .a { color: var(--accent); font-weight: 700; }
+
+.f-right { text-align: right; }
+.f-rings { display: flex; gap: 4px; justify-content: flex-end; margin-bottom: 10px; }
+.f-dot { width: 7px; height: 7px; border-radius: 50%; opacity: 0.5; }
+.f-meta {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--fs-mono);
+  font-weight: 500;
+  color: var(--t4);
+  line-height: 2.2;
+  letter-spacing: 1px;
+}
+
+/* ── REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s cubic-bezier(.22,1,.36,1), transform 0.6s cubic-bezier(.22,1,.36,1);
+}
+.reveal.on { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="brand">
+    <div class="rings">
+      <div class="ring ring-g"></div>
+      <div class="ring ring-b"></div>
+      <div class="ring ring-t"></div>
+    </div>
+    <span class="brand-name">Séminaire IA — Norsys</span>
+  </div>
+  <div class="scale-ctrl">
+    <button class="s-btn" onclick="adj(-0.08)" aria-label="Réduire">A−</button>
+    <div class="s-sep"></div>
+    <span class="s-val" id="sv">100%</span>
+    <div class="s-sep"></div>
+    <button class="s-btn" onclick="adj(0.08)" aria-label="Agrandir">A+</button>
+    <div class="s-sep"></div>
+    <button class="s-btn" onclick="rst()" aria-label="Reset" style="opacity:.5;font-size:11px;">↺</button>
+  </div>
+</nav>
+
+<header class="hero reveal">
+  <div class="hero-label">
+    <div class="hero-dot"></div>
+    <span class="hero-label-txt">Companion — Demi-journée pratique</span>
+  </div>
+  <h1 class="hero-title">
+    <span class="l1">Design</span>
+    <span class="l2">Structurel</span>
+    <span class="l3">de Prompt</span>
+  </h1>
+  <div class="hero-foot">
+    <p class="hero-sub">Un prompt n'est pas une question.<br><strong>C'est une architecture de dialogue.</strong></p>
+    <div class="hero-meta">Tous profils · Tous métiers<br>À conserver après la session</div>
+  </div>
+</header>
+
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span>Design Structurel de Prompt</span><span class="sep">·</span>
+    <span>C01 Objectif</span><span class="sep">·</span><span>C02 Contexte</span><span class="sep">·</span>
+    <span>C03 Données</span><span class="sep">·</span><span>C04 Contraintes</span><span class="sep">·</span>
+    <span>C05 Format</span><span class="sep">·</span><span>C06 Si manque</span><span class="sep">·</span>
+    <span>Design Structurel de Prompt</span><span class="sep">·</span>
+    <span>C01 Objectif</span><span class="sep">·</span><span>C02 Contexte</span><span class="sep">·</span>
+    <span>C03 Données</span><span class="sep">·</span><span>C04 Contraintes</span><span class="sep">·</span>
+    <span>C05 Format</span><span class="sep">·</span><span>C06 Si manque</span><span class="sep">·</span>
+  </div>
+</div>
+
+<section class="sec reveal">
+  <div class="sec-head">
+    <span class="sec-n">01</span>
+    <h2 class="sec-t">Anatomie d'un <span class="accent">prompt</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <p class="sec-intro">Comme briefer un collègue : plus tu es précis, meilleur est le résultat.</p>
+  <div class="anatomy">
+    <div class="a-card"><div class="a-num">1</div>
+      <div class="a-code">C01 — Objectif</div>
+      <div class="a-name">Ce que tu veux obtenir</div>
+      <div class="a-metaphor">La destination GPS avant de partir</div>
+      <div class="a-q">Formule la sortie attendue, pas la tâche. L'IA doit savoir où arriver, pas juste par où passer.</div>
+      <div class="a-ex">→ "Liste de 5 cas de test prioritaires"<br>pas "aide-moi avec la recette"</div>
+    </div>
+    <div class="a-card"><div class="a-num">2</div>
+      <div class="a-code">C02 — Contexte</div>
+      <div class="a-name">Pourquoi / Pour qui</div>
+      <div class="a-metaphor">La carte avant d'explorer</div>
+      <div class="a-q">L'IA s'adapte à l'environnement réel que tu lui donnes. Sans contexte, elle devine — et se trompe.</div>
+      <div class="a-ex">→ "ESN, équipe mixte,<br>livrable CODIR vendredi"</div>
+    </div>
+    <div class="a-card"><div class="a-num">3</div>
+      <div class="a-code">C03 — Données</div>
+      <div class="a-name">Ce que tu fournis</div>
+      <div class="a-metaphor">Les matériaux avant de construire</div>
+      <div class="a-q">Plus tu donnes, moins elle invente. Textes, specs, CR, tickets — tout est utilisable.</div>
+      <div class="a-ex">→ CR de réunion, backlog Jira,<br>specs fonctionnelles</div>
+    </div>
+    <div class="a-card"><div class="a-num">4</div>
+      <div class="a-code">C04 — Contraintes</div>
+      <div class="a-name">Ce qu'elle doit respecter</div>
+      <div class="a-metaphor">Les panneaux de signalisation</div>
+      <div class="a-q">Ton, longueur, format interdit. Les contraintes cadrent sans censurer.</div>
+      <div class="a-ex">→ "Pas de jargon / Max 5 items /<br>Langue accessible"</div>
+    </div>
+    <div class="a-card"><div class="a-num">5</div>
+      <div class="a-code">C05 — Format</div>
+      <div class="a-name">La forme de la réponse</div>
+      <div class="a-metaphor">Le moule avant de couler le béton</div>
+      <div class="a-q">Tableau, liste, prose, étapes. Le format change la lisibilité sans changer le fond.</div>
+      <div class="a-ex">→ "Tableau : Scénario / Attendu / Statut"<br>ou "Liste, une action par ligne"</div>
+    </div>
+    <div class="a-card"><div class="a-num">6</div>
+      <div class="a-code">C06 — Si manque</div>
+      <div class="a-name">Protocole si donnée absente</div>
+      <div class="a-metaphor">Le consultant qui demande avant de livrer</div>
+      <div class="a-q">Ce que l'IA fait si une info est absente. Sans ça, elle devine. Avec ça, elle dialogue.</div>
+      <div class="a-ex">→ "Si une info manque, pose max<br>2 questions avant de produire"</div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker-track rev">
+    <span>Ce qui compte vraiment</span><span class="sep">·</span>
+    <span>Objectif avant tout</span><span class="sep">·</span>
+    <span>Contexte = calibrage</span><span class="sep">·</span>
+    <span>Contraintes = filtre</span><span class="sep">·</span>
+    <span>Rôle = bonus</span><span class="sep">·</span>
+    <span>L'intention prime</span><span class="sep">·</span>
+    <span>Ce qui compte vraiment</span><span class="sep">·</span>
+    <span>Objectif avant tout</span><span class="sep">·</span>
+    <span>Contexte = calibrage</span><span class="sep">·</span>
+    <span>Contraintes = filtre</span><span class="sep">·</span>
+    <span>Rôle = bonus</span><span class="sep">·</span>
+    <span>L'intention prime</span><span class="sep">·</span>
+  </div>
+</div>
+
+<section class="sec reveal">
+  <div class="sec-head">
+    <span class="sec-n">02</span>
+    <h2 class="sec-t">Ce qui <span class="accent">compte</span> vraiment</h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="impact-wrap">
+    <div class="impact-layout">
+      <div class="impact-left">
+        <p class="impact-quote">"Agis comme un expert senior…" sans contexte ni objectif = réponse générique.<br><br><strong>Le rôle est un bonus, pas la clé.</strong> Ce qui change tout : savoir où tu veux aller et pourquoi.</p>
+      </div>
+      <div class="impact-right">
+        <div class="i-row">
+          <div class="i-head"><span class="i-lbl">Objectif</span><span class="i-tag">Impact majeur</span></div>
+          <div class="i-track"><div class="i-fill f90" data-w="90"></div></div>
+        </div>
+        <div class="i-row">
+          <div class="i-head"><span class="i-lbl">Contexte</span><span class="i-tag">Impact fort</span></div>
+          <div class="i-track"><div class="i-fill f75" data-w="75"></div></div>
+        </div>
+        <div class="i-row">
+          <div class="i-head"><span class="i-lbl">Contraintes</span><span class="i-tag">Impact fort</span></div>
+          <div class="i-track"><div class="i-fill f65" data-w="65"></div></div>
+        </div>
+        <div class="i-row">
+          <div class="i-head"><span class="i-lbl">Rôle / Persona</span><span class="i-tag">Bonus</span></div>
+          <div class="i-track"><div class="i-fill f35" data-w="35"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker-track" style="animation-duration:26s;">
+    <span>Monologue → Dialogue</span><span class="sep">·</span>
+    <span>V1 → Analyse → Affiner → Capitaliser</span><span class="sep">·</span>
+    <span>Une méthode, pas un prompt parfait</span><span class="sep">·</span>
+    <span>Briefer un junior</span><span class="sep">·</span>
+    <span>Monologue → Dialogue</span><span class="sep">·</span>
+    <span>V1 → Analyse → Affiner → Capitaliser</span><span class="sep">·</span>
+    <span>Une méthode, pas un prompt parfait</span><span class="sep">·</span>
+    <span>Briefer un junior</span><span class="sep">·</span>
+  </div>
+</div>
+
+<section class="sec reveal">
+  <div class="sec-head">
+    <span class="sec-n">03</span>
+    <h2 class="sec-t">Changer de <span class="accent">posture</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="posture-grid">
+    <div class="p-card bad">
+      <span class="p-tag bad">À dépasser</span>
+      <div class="p-title">Le monologue</div>
+      <div class="p-metaphor">Envoyer un mail sans relire, et attendre que l'autre devine.</div>
+      <ul class="p-list">
+        <li>Une tentative, on espère que ça marche</li>
+        <li>On attend la réponse parfaite du premier coup</li>
+        <li>On blâme l'IA si la réponse est mauvaise</li>
+        <li>On change d'outil si ça ne marche pas</li>
+      </ul>
+    </div>
+    <div class="p-card good">
+      <span class="p-tag good">À adopter</span>
+      <div class="p-title">Le dialogue</div>
+      <div class="p-metaphor">Briefer un junior : V1 → feedback → V2 → livrable.</div>
+      <ul class="p-list">
+        <li>V1 → analyse → affiner → V2 → ajuster</li>
+        <li>On demande à l'IA ce qui manquait dans le prompt</li>
+        <li>On encode les corrections pour la prochaine fois</li>
+        <li>On construit une méthode, pas un prompt parfait</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker-track rev" style="animation-duration:22s;">
+    <span>Formuler</span><span class="sep">·</span><span>Analyser</span><span class="sep">·</span>
+    <span>Affiner</span><span class="sep">·</span><span>Capitaliser</span><span class="sep">·</span>
+    <span>Contrat de dialogue</span><span class="sep">·</span><span>Principe V1</span><span class="sep">·</span>
+    <span>Formuler</span><span class="sep">·</span><span>Analyser</span><span class="sep">·</span>
+    <span>Affiner</span><span class="sep">·</span><span>Capitaliser</span><span class="sep">·</span>
+    <span>Contrat de dialogue</span><span class="sep">·</span><span>Principe V1</span><span class="sep">·</span>
+  </div>
+</div>
+
+<section class="sec reveal">
+  <div class="sec-head">
+    <span class="sec-n">04</span>
+    <h2 class="sec-t">Boucle <span class="accent">d'amélioration</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="boucle-grid">
+    <div class="steps-card">
+      <div class="b-step">
+        <div class="b-n">01</div>
+        <div><div class="b-name">Formuler</div><div class="b-desc">Objectif + contexte + contraintes. La V1 n'a pas besoin d'être parfaite — elle a besoin d'exister.</div></div>
+      </div>
+      <div class="b-step">
+        <div class="b-n">02</div>
+        <div><div class="b-name">Analyser</div><div class="b-desc">Qu'est-ce qui manquait dans ma demande ? Pas dans la réponse — le problème est souvent dans le brief.</div></div>
+      </div>
+      <div class="b-step">
+        <div class="b-n">03</div>
+        <div><div class="b-name">Affiner</div><div class="b-desc">Ajouter contexte, préciser contraintes, corriger le format. Chaque itération réduit le delta.</div></div>
+      </div>
+      <div class="b-step">
+        <div class="b-n">04</div>
+        <div><div class="b-name">Capitaliser</div><div class="b-desc">Encoder la correction dans un template réutilisable. C'est ça, passer d'un usage à une méthode.</div></div>
+      </div>
+    </div>
+    <div class="rules-col">
+      <div class="rule-card">
+        <div class="rule-lbl">Contrat de dialogue</div>
+        <div class="rule-txt">Ne devine jamais une info critique. Si une donnée manque → pose une question. Si plusieurs interprétations → présente-les avant de choisir.</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-lbl">Principe V1</div>
+        <div class="rule-txt">Cette réponse est une V1, destinée à évoluer. Propose 2 pistes d'amélioration à la fin. L'IA critique sa propre réponse — utilise-le.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker-track" style="animation-duration:20s;">
+    <span>Chef de projet</span><span class="sep">·</span>
+    <span>Testeur · Recette</span><span class="sep">·</span>
+    <span>Développeur</span><span class="sep">·</span>
+    <span>CR → Actions</span><span class="sep">·</span>
+    <span>Specs → Cas de test</span><span class="sep">·</span>
+    <span>Notes → User stories</span><span class="sep">·</span>
+    <span>Chef de projet</span><span class="sep">·</span>
+    <span>Testeur · Recette</span><span class="sep">·</span>
+    <span>Développeur</span><span class="sep">·</span>
+    <span>CR → Actions</span><span class="sep">·</span>
+    <span>Specs → Cas de test</span><span class="sep">·</span>
+    <span>Notes → User stories</span><span class="sep">·</span>
+  </div>
+</div>
+
+<section class="sec reveal">
+  <div class="sec-head">
+    <span class="sec-n">05</span>
+    <h2 class="sec-t">Exemples <span class="accent">métier</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <p class="sec-intro">Trois profils, trois usages concrets — même structure C01→C06.</p>
+  <div class="ex-grid">
+    <div class="ex-card">
+      <span class="ex-tag">Exemple 01</span>
+      <div class="ex-profile">Chef de projet / Consultant<br>CR → actions priorisées</div>
+      <div class="ex-row"><div class="ex-c">C01</div><div class="ex-v">Extraire les actions décidées et les prioriser par urgence.</div></div>
+      <div class="ex-row"><div class="ex-c">C02</div><div class="ex-v">Réunion de cadrage ESN, 6 participants, décisions mêlées aux discussions.</div></div>
+      <div class="ex-row"><div class="ex-c">C03</div><div class="ex-v">[Texte brut du CR]</div></div>
+      <div class="ex-row"><div class="ex-c">C04</div><div class="ex-v">Uniquement les actions actées. Responsable pour chaque.</div></div>
+      <div class="ex-row"><div class="ex-c">C05</div><div class="ex-v">Tableau : Action / Responsable / Deadline.</div></div>
+      <div class="ex-row"><div class="ex-c">C06</div><div class="ex-v">Si responsable absent → "À confirmer".</div></div>
+    </div>
+    <div class="ex-card">
+      <span class="ex-tag">Exemple 02</span>
+      <div class="ex-profile">Testeur / Recette<br>Specs → cas de test</div>
+      <div class="ex-row"><div class="ex-c">C01</div><div class="ex-v">Générer les cas de test prioritaires, nominaux et cas limites.</div></div>
+      <div class="ex-row"><div class="ex-c">C02</div><div class="ex-v">Module connexion, app web B2B, recette avant MEP.</div></div>
+      <div class="ex-row"><div class="ex-c">C03</div><div class="ex-v">[Specs fonctionnelles ou user stories]</div></div>
+      <div class="ex-row"><div class="ex-c">C04</div><div class="ex-v">Pas de cas techniques. Max 10 cas. Langage métier.</div></div>
+      <div class="ex-row"><div class="ex-c">C05</div><div class="ex-v">Tableau : Scénario / Données / Résultat attendu / Statut.</div></div>
+      <div class="ex-row"><div class="ex-c">C06</div><div class="ex-v">Si specs incomplètes → signaler les zones grises avant de générer.</div></div>
+    </div>
+    <div class="ex-card">
+      <span class="ex-tag">Exemple 03</span>
+      <div class="ex-profile">Développeur / Technique<br>Notes → tickets Jira</div>
+      <div class="ex-row"><div class="ex-c">C01</div><div class="ex-v">Transformer les notes de brief en user stories prêtes pour Jira.</div></div>
+      <div class="ex-row"><div class="ex-c">C02</div><div class="ex-v">Projet e-commerce, équipe 4 devs, sprint 2 semaines.</div></div>
+      <div class="ex-row"><div class="ex-c">C03</div><div class="ex-v">[Notes brutes du brief]</div></div>
+      <div class="ex-row"><div class="ex-c">C04</div><div class="ex-v">"En tant que [rôle], je veux [action] afin de [bénéfice]". Critères d'acceptance inclus.</div></div>
+      <div class="ex-row"><div class="ex-c">C05</div><div class="ex-v">Liste numérotée, une story par item, critères en sous-bullets.</div></div>
+      <div class="ex-row"><div class="ex-c">C06</div><div class="ex-v">Si rôle non précisé → poser la question avant de produire.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker-track rev" style="animation-duration:28s;">
+    <span>Dialogue LLM</span><span class="sep">·</span>
+    <span>Appels d'outils</span><span class="sep">·</span>
+    <span>Multi-agents</span><span class="sep">·</span>
+    <span>Bien prompter est un point de départ</span><span class="sep">·</span>
+    <span>Dialogue LLM</span><span class="sep">·</span>
+    <span>Appels d'outils</span><span class="sep">·</span>
+    <span>Multi-agents</span><span class="sep">·</span>
+    <span>Bien prompter est un point de départ</span><span class="sep">·</span>
+  </div>
+</div>
+
+<section class="sec reveal">
+  <div class="sec-head">
+    <span class="sec-n">06</span>
+    <h2 class="sec-t">Au-delà du <span class="accent">prompt</span></h2>
+    <div class="sec-rule"></div>
+  </div>
+  <div class="horizon-card">
+    <div class="h-track">
+      <div class="h-node">
+        <div class="h-dot now"></div>
+        <div class="h-status now">Vous êtes ici</div>
+        <div class="h-lbl">Dialogue LLM</div>
+        <div class="h-desc">You ask, it answers. Le prompt structuré est votre levier principal — et c'est déjà beaucoup.</div>
+      </div>
+      <div class="h-node">
+        <div class="h-dot next"></div>
+        <div class="h-status next">Prochaine marche</div>
+        <div class="h-lbl">Appels d'outils</div>
+        <div class="h-desc">L'IA accède à des données externes, consulte des bases documentaires, exécute des actions réelles.</div>
+      </div>
+      <div class="h-node">
+        <div class="h-dot later"></div>
+        <div class="h-status later">Horizon</div>
+        <div class="h-lbl dim">Multi-agents</div>
+        <div class="h-desc dim">Plusieurs IA collaborent en parallèle, se contrôlent mutuellement, produisent en autonomie.</div>
+      </div>
+    </div>
+    <div class="h-caption">Bien prompter est une compétence essentielle — et un point de départ, pas une destination.</div>
+  </div>
+</section>
+
+<footer class="footer reveal">
+  <div>
+    <div class="f-wordmark">Design Structurel de Prompt</div>
+    <div class="f-chain">
+      <span class="a">C01</span> Objectif · <span class="a">C02</span> Contexte · <span class="a">C03</span> Données<br>
+      <span class="a">C04</span> Contraintes · <span class="a">C05</span> Format · <span class="a">C06</span> Si manque
+    </div>
+  </div>
+  <div class="f-right">
+    <div class="f-rings">
+      <div class="f-dot" style="background:var(--n-green)"></div>
+      <div class="f-dot" style="background:var(--n-blue)"></div>
+      <div class="f-dot" style="background:var(--n-terra)"></div>
+    </div>
+    <div class="f-meta">Norsys groupe<br>Séminaire IA 2026</div>
+  </div>
+</footer>
+
+<script>
+const io = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if (e.isIntersecting) { setTimeout(() => e.target.classList.add('on'), i*40); io.unobserve(e.target); }
+  });
+}, { threshold: 0.04, rootMargin: '0px 0px -16px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+const cardIO = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.querySelectorAll('.a-card, .p-card, .ex-card, .b-step').forEach((c,i) => {
+      c.style.opacity='0'; c.style.transform='translateY(12px)';
+      c.style.transition=`opacity .45s ease ${i*.06}s,transform .45s cubic-bezier(.22,1,.36,1) ${i*.06}s`;
+      setTimeout(()=>{c.style.opacity='1';c.style.transform='none';},60+i*55);
+    });
+    cardIO.unobserve(entry.target);
+  });
+}, { threshold: 0.04 });
+document.querySelectorAll('.anatomy,.posture-grid,.ex-grid,.steps-card').forEach(el => cardIO.observe(el));
+
+const barIO = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.querySelectorAll('.i-fill').forEach((b,i) => {
+      setTimeout(()=>{ b.style.width=b.getAttribute('data-w')+'%'; },120+i*90);
+    });
+    barIO.unobserve(entry.target);
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.impact-right').forEach(el => barIO.observe(el));
+
+let scale=1;
+const sv=document.getElementById('sv');
+function adj(d){ scale=Math.max(.75,Math.min(1.5,+(scale+d).toFixed(2))); document.documentElement.style.setProperty('--scale',scale); sv.textContent=Math.round(scale*100)+'%'; }
+function rst(){ scale=1; document.documentElement.style.setProperty('--scale',1); sv.textContent='100%'; }
+</script>
+</body>
+</html>
