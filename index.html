@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Design Structurel de Prompt — Companion du séminaire IA Norsys">
+<title>Design Structurel de Prompt — Norsys</title>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     LOADER — 3 ronds Norsys qui tournent
+     Discret, élégant, ~1.2s
+═══════════════════════════════════════ -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-rings">
+    <div class="loader-ring loader-ring-t"></div>
+    <div class="loader-ring loader-ring-b"></div>
+    <div class="loader-ring loader-ring-g"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CONTENU PRINCIPAL
+═══════════════════════════════════════ -->
+<div class="site" id="site">
+
+  <!-- TOPBAR — fine, non sticky, accessible au scroll up -->
+  <nav class="topbar" id="topbar">
+    <div class="brand">
+      <div class="rings">
+        <div class="ring ring-t"></div>
+        <div class="ring ring-b"></div>
+        <div class="ring ring-g"></div>
+      </div>
+      <span class="brand-name">Séminaire IA — Norsys</span>
+    </div>
+    <div class="topbar-right">
+      <div class="scale-ctrl">
+        <button class="s-btn" id="scaleDown" aria-label="Réduire la taille du texte">A−</button>
+        <div class="s-sep"></div>
+        <span class="s-val" id="scaleVal">100%</span>
+        <div class="s-sep"></div>
+        <button class="s-btn" id="scaleUp" aria-label="Agrandir la taille du texte">A+</button>
+        <div class="s-sep"></div>
+        <button class="s-btn s-reset" id="scaleReset" aria-label="Réinitialiser la taille">↺</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-label" data-hero-seq>
+      <div class="hero-dot"></div>
+      <span class="hero-label-txt">Companion — Demi-journée pratique</span>
+    </div>
+    <h1 class="hero-title" data-parallax="0.04">
+      <span class="l1" data-hero-seq>Design</span>
+      <span class="l2" data-hero-seq>Structurel</span>
+      <span class="l3" data-hero-seq>de Prompt</span>
+    </h1>
+    <div class="hero-foot" data-hero-seq>
+      <p class="hero-sub">
+        Un prompt n'est pas une question.<br>
+        <strong>C'est une architecture de dialogue.</strong>
+      </p>
+      <div class="hero-meta">
+        Tous profils · Tous métiers<br>
+        À conserver après la session
+      </div>
+    </div>
+  </header>
+
+  <!-- TICKER 1 -->
+  <div class="ticker-wrap">
+    <div class="ticker-track">
+      <span>Design Structurel de Prompt</span><span class="sep">·</span>
+      <span>C01 Objectif</span><span class="sep">·</span><span>C02 Contexte</span><span class="sep">·</span>
+      <span>C03 Données</span><span class="sep">·</span><span>C04 Contraintes</span><span class="sep">·</span>
+      <span>C05 Format</span><span class="sep">·</span><span>C06 Si manque</span><span class="sep">·</span>
+      <span>Design Structurel de Prompt</span><span class="sep">·</span>
+      <span>C01 Objectif</span><span class="sep">·</span><span>C02 Contexte</span><span class="sep">·</span>
+      <span>C03 Données</span><span class="sep">·</span><span>C04 Contraintes</span><span class="sep">·</span>
+      <span>C05 Format</span><span class="sep">·</span><span>C06 Si manque</span><span class="sep">·</span>
+    </div>
+  </div>
+
+  <!-- 01 — ANATOMIE -->
+  <section class="sec" data-reveal>
+    <div class="sec-head">
+      <span class="sec-n">01</span>
+      <h2 class="sec-t"><span class="pre">anatomie d'un </span><span class="accent">prompt</span></h2>
+      <div class="sec-rule"></div>
+    </div>
+    <p class="sec-intro">Comme briefer un collègue : plus tu es précis, meilleur est le résultat.</p>
+    <div class="anatomy">
+      <div class="a-card" data-tilt>
+        <div class="a-num">1</div>
+        <div class="a-code">C01 — Objectif</div>
+        <div class="a-name">Ce que tu veux obtenir</div>
+        <div class="a-metaphor">La destination GPS avant de partir</div>
+        <div class="a-q">Formule la sortie attendue, pas la tâche. L'IA doit savoir où arriver, pas juste par où passer.</div>
+        <div class="a-ex">→ "Liste de 5 cas de test prioritaires"<br>pas "aide-moi avec la recette"</div>
+      </div>
+      <div class="a-card" data-tilt>
+        <div class="a-num">2</div>
+        <div class="a-code">C02 — Contexte</div>
+        <div class="a-name">Pourquoi / Pour qui</div>
+        <div class="a-metaphor">La carte avant d'explorer</div>
+        <div class="a-q">L'IA s'adapte à l'environnement réel que tu lui donnes. Sans contexte, elle devine — et se trompe.</div>
+        <div class="a-ex">→ "ESN, équipe mixte,<br>livrable CODIR vendredi"</div>
+      </div>
+      <div class="a-card" data-tilt>
+        <div class="a-num">3</div>
+        <div class="a-code">C03 — Données</div>
+        <div class="a-name">Ce que tu fournis</div>
+        <div class="a-metaphor">Les matériaux avant de construire</div>
+        <div class="a-q">Plus tu donnes, moins elle invente. Textes, specs, CR, tickets — tout est utilisable.</div>
+        <div class="a-ex">→ CR de réunion, backlog Jira,<br>specs fonctionnelles</div>
+      </div>
+      <div class="a-card" data-tilt>
+        <div class="a-num">4</div>
+        <div class="a-code">C04 — Contraintes</div>
+        <div class="a-name">Ce qu'elle doit respecter</div>
+        <div class="a-metaphor">Les panneaux de signalisation</div>
+        <div class="a-q">Ton, longueur, format interdit. Les contraintes cadrent sans censurer.</div>
+        <div class="a-ex">→ "Pas de jargon / Max 5 items /<br>Langue accessible"</div>
+      </div>
+      <div class="a-card" data-tilt>
+        <div class="a-num">5</div>
+        <div class="a-code">C05 — Format</div>
+        <div class="a-name">La forme de la réponse</div>
+        <div class="a-metaphor">Le moule avant de couler le béton</div>
+        <div class="a-q">Tableau, liste, prose, étapes. Le format change la lisibilité sans changer le fond.</div>
+        <div class="a-ex">→ "Tableau : Scénario / Attendu / Statut"<br>ou "Liste, une action par ligne"</div>
+      </div>
+      <div class="a-card" data-tilt>
+        <div class="a-num">6</div>
+        <div class="a-code">C06 — Si manque</div>
+        <div class="a-name">Protocole si donnée absente</div>
+        <div class="a-metaphor">Le consultant qui demande avant de livrer</div>
+        <div class="a-q">Ce que l'IA fait si une info est absente. Sans ça, elle devine. Avec ça, elle dialogue.</div>
+        <div class="a-ex">→ "Si une info manque, pose max<br>2 questions avant de produire"</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER 2 -->
+  <div class="ticker-wrap">
+    <div class="ticker-track rev">
+      <span>Ce qui compte vraiment</span><span class="sep">·</span>
+      <span>Objectif avant tout</span><span class="sep">·</span>
+      <span>Contexte = calibrage</span><span class="sep">·</span>
+      <span>Contraintes = filtre</span><span class="sep">·</span>
+      <span>Rôle = bonus</span><span class="sep">·</span>
+      <span>L'intention prime</span><span class="sep">·</span>
+      <span>Ce qui compte vraiment</span><span class="sep">·</span>
+      <span>Objectif avant tout</span><span class="sep">·</span>
+      <span>Contexte = calibrage</span><span class="sep">·</span>
+      <span>Contraintes = filtre</span><span class="sep">·</span>
+      <span>Rôle = bonus</span><span class="sep">·</span>
+      <span>L'intention prime</span><span class="sep">·</span>
+    </div>
+  </div>
+
+  <!-- 02 — IMPACT -->
+  <section class="sec" data-reveal>
+    <div class="sec-head">
+      <span class="sec-n">02</span>
+      <h2 class="sec-t"><span class="pre">ce qui </span><span class="accent">compte</span><span class="pre"> vraiment</span></h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="impact-wrap">
+      <div class="impact-layout">
+        <div class="impact-left">
+          <p class="impact-quote">"Agis comme un expert senior…" sans contexte ni objectif = réponse générique.<br><br><strong>Le rôle est un bonus, pas la clé.</strong> Ce qui change tout : savoir où tu veux aller et pourquoi.</p>
+        </div>
+        <div class="impact-right">
+          <div class="i-row">
+            <div class="i-head"><span class="i-lbl">Objectif</span><span class="i-tag">Impact majeur</span></div>
+            <div class="i-track"><div class="i-fill f90" data-w="90"></div></div>
+          </div>
+          <div class="i-row">
+            <div class="i-head"><span class="i-lbl">Contexte</span><span class="i-tag">Impact fort</span></div>
+            <div class="i-track"><div class="i-fill f75" data-w="75"></div></div>
+          </div>
+          <div class="i-row">
+            <div class="i-head"><span class="i-lbl">Contraintes</span><span class="i-tag">Impact fort</span></div>
+            <div class="i-track"><div class="i-fill f65" data-w="65"></div></div>
+          </div>
+          <div class="i-row">
+            <div class="i-head"><span class="i-lbl">Rôle / Persona</span><span class="i-tag">Bonus</span></div>
+            <div class="i-track"><div class="i-fill f35" data-w="35"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER 3 -->
+  <div class="ticker-wrap">
+    <div class="ticker-track" style="animation-duration:26s;">
+      <span>Monologue → Dialogue</span><span class="sep">·</span>
+      <span>V1 → Analyse → Affiner → Capitaliser</span><span class="sep">·</span>
+      <span>Une méthode, pas un prompt parfait</span><span class="sep">·</span>
+      <span>Briefer un junior</span><span class="sep">·</span>
+      <span>Monologue → Dialogue</span><span class="sep">·</span>
+      <span>V1 → Analyse → Affiner → Capitaliser</span><span class="sep">·</span>
+      <span>Une méthode, pas un prompt parfait</span><span class="sep">·</span>
+      <span>Briefer un junior</span><span class="sep">·</span>
+    </div>
+  </div>
+
+  <!-- 03 — POSTURE -->
+  <section class="sec" data-reveal>
+    <div class="sec-head">
+      <span class="sec-n">03</span>
+      <h2 class="sec-t"><span class="pre">changer de </span><span class="accent">posture</span></h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="posture-grid">
+      <div class="p-card bad" data-tilt>
+        <span class="p-tag bad">À dépasser</span>
+        <div class="p-title">Le monologue</div>
+        <div class="p-metaphor">Envoyer un mail sans relire, et attendre que l'autre devine.</div>
+        <ul class="p-list">
+          <li>Une tentative, on espère que ça marche</li>
+          <li>On attend la réponse parfaite du premier coup</li>
+          <li>On blâme l'IA si la réponse est mauvaise</li>
+          <li>On change d'outil si ça ne marche pas</li>
+        </ul>
+      </div>
+      <div class="p-card good" data-tilt>
+        <span class="p-tag good">À adopter</span>
+        <div class="p-title">Le dialogue</div>
+        <div class="p-metaphor">Briefer un junior : V1 → feedback → V2 → livrable.</div>
+        <ul class="p-list">
+          <li>V1 → analyse → affiner → V2 → ajuster</li>
+          <li>On demande à l'IA ce qui manquait dans le prompt</li>
+          <li>On encode les corrections pour la prochaine fois</li>
+          <li>On construit une méthode, pas un prompt parfait</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER 4 -->
+  <div class="ticker-wrap">
+    <div class="ticker-track rev" style="animation-duration:22s;">
+      <span>Formuler</span><span class="sep">·</span><span>Analyser</span><span class="sep">·</span>
+      <span>Affiner</span><span class="sep">·</span><span>Capitaliser</span><span class="sep">·</span>
+      <span>Contrat de dialogue</span><span class="sep">·</span><span>Principe V1</span><span class="sep">·</span>
+      <span>Formuler</span><span class="sep">·</span><span>Analyser</span><span class="sep">·</span>
+      <span>Affiner</span><span class="sep">·</span><span>Capitaliser</span><span class="sep">·</span>
+      <span>Contrat de dialogue</span><span class="sep">·</span><span>Principe V1</span><span class="sep">·</span>
+    </div>
+  </div>
+
+  <!-- 04 — BOUCLE -->
+  <section class="sec" data-reveal>
+    <div class="sec-head">
+      <span class="sec-n">04</span>
+      <h2 class="sec-t"><span class="pre">boucle </span><span class="accent">d'amélioration</span></h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="boucle-grid">
+      <div class="steps-card">
+        <div class="b-step">
+          <div class="b-n">01</div>
+          <div><div class="b-name">Formuler</div><div class="b-desc">Objectif + contexte + contraintes. La V1 n'a pas besoin d'être parfaite — elle a besoin d'exister.</div></div>
+        </div>
+        <div class="b-step">
+          <div class="b-n">02</div>
+          <div><div class="b-name">Analyser</div><div class="b-desc">Qu'est-ce qui manquait dans ma demande ? Pas dans la réponse — le problème est souvent dans le brief.</div></div>
+        </div>
+        <div class="b-step">
+          <div class="b-n">03</div>
+          <div><div class="b-name">Affiner</div><div class="b-desc">Ajouter contexte, préciser contraintes, corriger le format. Chaque itération réduit le delta.</div></div>
+        </div>
+        <div class="b-step">
+          <div class="b-n">04</div>
+          <div><div class="b-name">Capitaliser</div><div class="b-desc">Encoder la correction dans un template réutilisable. C'est ça, passer d'un usage à une méthode.</div></div>
+        </div>
+      </div>
+      <div class="rules-col">
+        <div class="rule-card">
+          <div class="rule-lbl">Contrat de dialogue</div>
+          <div class="rule-txt">Ne devine jamais une info critique. Si une donnée manque → pose une question. Si plusieurs interprétations → présente-les avant de choisir.</div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-lbl">Principe V1</div>
+          <div class="rule-txt">Cette réponse est une V1, destinée à évoluer. Propose 2 pistes d'amélioration à la fin. L'IA critique sa propre réponse — utilise-le.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER 5 -->
+  <div class="ticker-wrap">
+    <div class="ticker-track" style="animation-duration:20s;">
+      <span>Chef de projet</span><span class="sep">·</span>
+      <span>Testeur · Recette</span><span class="sep">·</span>
+      <span>Développeur</span><span class="sep">·</span>
+      <span>Vie perso · Vacances en groupe</span><span class="sep">·</span>
+      <span>CR → Actions</span><span class="sep">·</span>
+      <span>Specs → Cas de test</span><span class="sep">·</span>
+      <span>Notes → User stories</span><span class="sep">·</span>
+      <span>Chef de projet</span><span class="sep">·</span>
+      <span>Testeur · Recette</span><span class="sep">·</span>
+      <span>Développeur</span><span class="sep">·</span>
+      <span>Vie perso · Vacances en groupe</span><span class="sep">·</span>
+      <span>CR → Actions</span><span class="sep">·</span>
+      <span>Specs → Cas de test</span><span class="sep">·</span>
+      <span>Notes → User stories</span><span class="sep">·</span>
+    </div>
+  </div>
+
+  <!-- 05 — EXEMPLES -->
+  <section class="sec" data-reveal>
+    <div class="sec-head">
+      <span class="sec-n">05</span>
+      <h2 class="sec-t"><span class="pre">exemples </span><span class="accent">métier</span></h2>
+      <div class="sec-rule"></div>
+    </div>
+    <p class="sec-intro">Quatre profils, quatre contextes — même structure C01→C06. Le dernier sort du cadre professionnel volontairement.</p>
+    <div class="ex-grid">
+      <div class="ex-card" data-tilt>
+        <span class="ex-tag">Exemple 01</span>
+        <div class="ex-profile">Chef de projet / Consultant<br>CR → actions priorisées</div>
+        <div class="ex-row"><div class="ex-c">C01</div><div class="ex-v">Extraire les actions décidées et les prioriser par urgence.</div></div>
+        <div class="ex-row"><div class="ex-c">C02</div><div class="ex-v">Réunion de cadrage ESN, 6 participants, décisions mêlées aux discussions.</div></div>
+        <div class="ex-row"><div class="ex-c">C03</div><div class="ex-v">[Texte brut du CR]</div></div>
+        <div class="ex-row"><div class="ex-c">C04</div><div class="ex-v">Uniquement les actions actées. Responsable identifié pour chaque.</div></div>
+        <div class="ex-row"><div class="ex-c">C05</div><div class="ex-v">Tableau : Action / Responsable / Deadline.</div></div>
+        <div class="ex-row"><div class="ex-c">C06</div><div class="ex-v">Si responsable absent → signaler "À confirmer".</div></div>
+      </div>
+      <div class="ex-card" data-tilt>
+        <span class="ex-tag">Exemple 02</span>
+        <div class="ex-profile">Testeur / Recette<br>Specs → cas de test</div>
+        <div class="ex-row"><div class="ex-c">C01</div><div class="ex-v">Générer les cas de test prioritaires, nominaux et cas limites.</div></div>
+        <div class="ex-row"><div class="ex-c">C02</div><div class="ex-v">Module connexion, app web B2B, recette fonctionnelle avant MEP.</div></div>
+        <div class="ex-row"><div class="ex-c">C03</div><div class="ex-v">[Specs fonctionnelles ou user stories]</div></div>
+        <div class="ex-row"><div class="ex-c">C04</div><div class="ex-v">Pas de cas techniques. Max 10 cas. Langage métier.</div></div>
+        <div class="ex-row"><div class="ex-c">C05</div><div class="ex-v">Tableau : Scénario / Données / Résultat attendu / Statut.</div></div>
+        <div class="ex-row"><div class="ex-c">C06</div><div class="ex-v">Si specs incomplètes → signaler les zones grises avant de générer.</div></div>
+      </div>
+      <div class="ex-card" data-tilt>
+        <span class="ex-tag">Exemple 03</span>
+        <div class="ex-profile">Développeur / Technique<br>Notes → tickets Jira</div>
+        <div class="ex-row"><div class="ex-c">C01</div><div class="ex-v">Transformer les notes de brief en user stories prêtes pour Jira.</div></div>
+        <div class="ex-row"><div class="ex-c">C02</div><div class="ex-v">Projet e-commerce, équipe 4 devs, sprint 2 semaines.</div></div>
+        <div class="ex-row"><div class="ex-c">C03</div><div class="ex-v">[Notes brutes du brief]</div></div>
+        <div class="ex-row"><div class="ex-c">C04</div><div class="ex-v">"En tant que [rôle], je veux [action] afin de [bénéfice]". Critères d'acceptance inclus.</div></div>
+        <div class="ex-row"><div class="ex-c">C05</div><div class="ex-v">Liste numérotée, une story par item, critères en sous-bullets.</div></div>
+        <div class="ex-row"><div class="ex-c">C06</div><div class="ex-v">Si rôle non précisé → poser la question avant de produire.</div></div>
+      </div>
+      <div class="ex-card perso" data-tilt>
+        <span class="ex-tag">Exemple 04 — Hors cadre</span>
+        <div class="ex-profile">N'importe qui, le samedi matin<br>Vacances de groupe → arbitrage de contraintes contradictoires</div>
+        <div class="ex-row"><div class="ex-c">C01</div><div class="ex-v">Bâtir une proposition d'itinéraire équilibrée pour des vacances collectives.</div></div>
+        <div class="ex-row"><div class="ex-c">C02</div><div class="ex-v">10 jours en été, 8 personnes. Budgets opposés, rythmes incompatibles, risque de micro-tensions.</div></div>
+        <div class="ex-row"><div class="ex-c">C03</div><div class="ex-v">[Destination, liste des participants avec budgets max, envies et vetos de chacun]</div></div>
+        <div class="ex-row"><div class="ex-c">C04</div><div class="ex-v">Budget calé sur le participant le plus limité. Rythme respirable. Activités communes modulaires — pas d'obligation de tout faire ensemble.</div></div>
+        <div class="ex-row"><div class="ex-c">C05</div><div class="ex-v">Tableau synoptique : Jour / Activité commune / Alternative libre / Coût estimé par personne.</div></div>
+        <div class="ex-row"><div class="ex-c">C06</div><div class="ex-v">Si le budget max d'un participant ou un veto majeur manque → s'arrêter et poser la question avant de planifier.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER 6 -->
+  <div class="ticker-wrap">
+    <div class="ticker-track rev" style="animation-duration:28s;">
+      <span>Dialogue LLM</span><span class="sep">·</span>
+      <span>Appels d'outils</span><span class="sep">·</span>
+      <span>Multi-agents</span><span class="sep">·</span>
+      <span>Bien prompter est un point de départ</span><span class="sep">·</span>
+      <span>Dialogue LLM</span><span class="sep">·</span>
+      <span>Appels d'outils</span><span class="sep">·</span>
+      <span>Multi-agents</span><span class="sep">·</span>
+      <span>Bien prompter est un point de départ</span><span class="sep">·</span>
+    </div>
+  </div>
+
+  <!-- 06 — HORIZON -->
+  <section class="sec" data-reveal>
+    <div class="sec-head">
+      <span class="sec-n">06</span>
+      <h2 class="sec-t"><span class="pre">au-delà du </span><span class="accent">prompt</span></h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="horizon-card">
+      <div class="h-track">
+        <div class="h-node">
+          <div class="h-dot now"></div>
+          <div class="h-status now">Vous êtes ici</div>
+          <div class="h-lbl">Dialogue LLM</div>
+          <div class="h-desc">You ask, it answers. Le prompt structuré est votre levier principal — et c'est déjà beaucoup.</div>
+        </div>
+        <div class="h-node">
+          <div class="h-dot next"></div>
+          <div class="h-status next">Prochaine marche</div>
+          <div class="h-lbl">Appels d'outils</div>
+          <div class="h-desc">L'IA accède à des données externes, consulte des bases documentaires, exécute des actions réelles.</div>
+        </div>
+        <div class="h-node">
+          <div class="h-dot later"></div>
+          <div class="h-status later">Horizon</div>
+          <div class="h-lbl dim">Multi-agents</div>
+          <div class="h-desc dim">Plusieurs IA collaborent en parallèle, se contrôlent mutuellement, produisent en autonomie.</div>
+        </div>
+      </div>
+      <div class="h-caption">Bien prompter est une compétence essentielle — et un point de départ, pas une destination.</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" data-reveal>
+    <div>
+      <div class="f-wordmark">Design Structurel de Prompt</div>
+      <div class="f-chain">
+        <span class="a">C01</span> Objectif · <span class="a">C02</span> Contexte · <span class="a">C03</span> Données<br>
+        <span class="a">C04</span> Contraintes · <span class="a">C05</span> Format · <span class="a">C06</span> Si manque
+      </div>
+    </div>
+    <div class="f-right">
+      <div class="f-rings">
+        <div class="f-dot" style="background:var(--n-terra)"></div>
+        <div class="f-dot" style="background:var(--n-blue)"></div>
+        <div class="f-dot" style="background:var(--n-green)"></div>
+      </div>
+      <div class="f-meta">Norsys<br>Séminaire IA 2026</div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════
+       EASTER EGG — zone révélée au bounce scroll
+  ═══════════════════════════════════════ -->
+  <section class="egg-zone" id="eggZone" aria-label="Zone secrète">
+    <div class="egg-hint" id="eggHint">
+      <span class="egg-hint-txt">continuez à tirer</span>
+      <span class="egg-hint-arrow">↓</span>
+    </div>
+    <div class="egg-content" id="eggContent">
+      <p class="egg-pretext">Vous avez structuré jusqu'au bout.</p>
+      <div class="egg-puzzle" id="eggPuzzle">
+        <div class="egg-target egg-target-1" data-slot="1"></div>
+        <div class="egg-target egg-target-2" data-slot="2"></div>
+        <div class="egg-target egg-target-3" data-slot="3"></div>
+        <div class="egg-ring egg-ring-g" data-ring="g" draggable="true" tabindex="0" role="button" aria-label="Cercle vert à assembler"></div>
+        <div class="egg-ring egg-ring-b" data-ring="b" draggable="true" tabindex="0" role="button" aria-label="Cercle bleu à assembler"></div>
+        <div class="egg-ring egg-ring-t" data-ring="t" draggable="true" tabindex="0" role="button" aria-label="Cercle terracotta à assembler"></div>
+      </div>
+      <p class="egg-instruction" id="eggInstruction">Assemblez les trois cercles.</p>
+      <p class="egg-message" id="eggMessage"></p>
+      <button class="egg-back" id="eggBack">Remonter ↑</button>
+    </div>
+  </section>
+
+</div><!-- /site -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
