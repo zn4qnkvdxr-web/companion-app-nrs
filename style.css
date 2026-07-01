@@ -52,6 +52,14 @@
   --elev-1: 0 1px 4px rgba(0,0,0,0.05), 0 3px 14px rgba(0,0,0,0.04);
   --elev-2: 0 2px 8px rgba(0,0,0,0.07), 0 12px 32px rgba(0,0,0,0.08);
   --elev-3: 0 2px 8px rgba(0,0,0,0.07), 0 16px 36px rgba(0,0,0,0.09);
+
+  /* — Teintes section À propos (dérivées des 3 couleurs Norsys) — */
+  --about-t1: #F4E4DC; /* terracotta très clair */
+  --about-t2: #EDD9C8; /* terracotta clair soutenu */
+  --about-t3: #DCEAF0; /* bleu très clair */
+  --about-t4: #CFE0EA; /* bleu clair soutenu */
+  --about-t5: #E4EEDA; /* vert très clair */
+  --about-t6: #D6E6C8; /* vert clair soutenu */
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1030,4 +1038,239 @@ body {
   .hero-title { letter-spacing: -1.5px; }
   .topbar { padding: 8px 16px; }
   .s-btn { padding: 6px 9px; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION À PROPOS — intégrée (Phase 5)
+   ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   SECTION À PROPOS — "Comment cette page a été conçue"
+   Phase 2 : CSS statique (apparence, sans animation ni mécanique)
+   ═══════════════════════════════════════════════════════════ */
+
+/* — Palette des 6 teintes, dérivées des 3 couleurs Norsys — */
+/* ─────────────────────────────────────────
+   DÉCLENCHEUR (bouton + hint scroll)
+   ───────────────────────────────────────── */
+.about-trigger {
+  background: var(--bg);
+  padding: clamp(40px, 7vw, 72px) var(--pad-x) clamp(48px, 8vw, 88px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.about-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--t1);
+  color: var(--bg);
+  border: none;
+  border-radius: 100px;
+  padding: 16px 32px;
+  font-family: inherit;
+  font-size: calc(var(--scale) * 15px);
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), background 0.3s var(--ease-out);
+  box-shadow: var(--elev-2);
+}
+.about-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--elev-3);
+  background: #000;
+}
+.about-btn:active { transform: translateY(0) scale(0.98); }
+
+.about-btn-arrow {
+  font-size: 1.1em;
+  transition: transform 0.3s var(--ease-out);
+}
+.about-btn:hover .about-btn-arrow { transform: translateY(3px); }
+
+.about-pull-hint {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--fs-mono);
+  color: var(--t4);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────
+   SECTION 6 VOLETS
+   ───────────────────────────────────────── */
+.about {
+  position: relative;
+}
+
+.about-block {
+  min-height: 100vh;
+  min-height: 100svh; /* évite le saut lié aux barres mobiles */
+  display: flex;
+  align-items: center;
+  padding: clamp(48px, 10vh, 120px) var(--pad-x);
+}
+
+/* Application des 6 teintes */
+.about-block[data-tint="1"] { background: var(--about-t1); }
+.about-block[data-tint="2"] { background: var(--about-t2); }
+.about-block[data-tint="3"] { background: var(--about-t3); }
+.about-block[data-tint="4"] { background: var(--about-t4); }
+.about-block[data-tint="5"] { background: var(--about-t5); }
+.about-block[data-tint="6"] { background: var(--about-t6); }
+
+.about-block-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.about-block-n {
+  display: block;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: calc(var(--scale) * clamp(48px, 10vw, 96px));
+  font-weight: 400;
+  color: rgba(13,13,13,0.12);
+  line-height: 1;
+  margin-bottom: clamp(16px, 3vw, 32px);
+  letter-spacing: -2px;
+}
+
+.about-block-title {
+  font-size: calc(var(--scale) * clamp(28px, 5vw, 52px));
+  font-weight: 900;
+  color: var(--t1);
+  line-height: 1.05;
+  letter-spacing: -1px;
+  margin-bottom: clamp(20px, 3vw, 32px);
+  max-width: 16ch;
+}
+
+.about-block-text {
+  font-size: calc(var(--scale) * clamp(15px, 2vw, 19px));
+  font-weight: 400;
+  color: var(--t2);
+  line-height: 1.7;
+  max-width: 52ch;
+}
+
+.about-block-aside {
+  font-size: calc(var(--scale) * clamp(13px, 1.7vw, 15px));
+  font-style: italic;
+  color: var(--t3);
+  line-height: 1.65;
+  max-width: 48ch;
+  margin-top: clamp(20px, 3vw, 28px);
+  padding-top: clamp(16px, 2.5vw, 22px);
+  border-top: 1px solid rgba(13,13,13,0.1);
+}
+
+/* ─────────────────────────────────────────
+   UI PERSISTANTE (progression + retour)
+   ───────────────────────────────────────── */
+.about-ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px var(--pad-x);
+  pointer-events: none; /* les enfants réactivent au besoin */
+}
+
+/* Barre de progression fine */
+.about-progress {
+  flex: 1;
+  height: 2px;
+  background: rgba(13,13,13,0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.about-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--t1);
+  border-radius: 2px;
+  transition: width 0.15s linear;
+}
+
+/* Bouton retour fixe */
+.about-return {
+  pointer-events: auto;
+  flex-shrink: 0;
+  background: var(--t1);
+  color: var(--bg);
+  border: none;
+  border-radius: 100px;
+  padding: 8px 18px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: calc(var(--scale) * 10px);
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: var(--elev-1);
+  transition: transform 0.25s var(--ease-out), background 0.25s var(--ease-out);
+}
+.about-return:hover { transform: translateY(-1px); background: #000; }
+.about-return:active { transform: scale(0.96); }
+
+/* ─────────────────────────────────────────
+   MOBILE
+   ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .about-block-title { max-width: none; }
+  .about-ui { padding: 10px 16px; }
+}
+
+/* ─────────────────────────────────────────
+   PHASE 3 : états d'ouverture
+   ───────────────────────────────────────── */
+/* UI (progression + retour) masquée par défaut, révélée à l'ouverture */
+.about-ui {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+}
+.about-ui.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Le déclencheur se transforme un peu quand on tire (piloté en JS via transform inline) */
+.about-trigger {
+  will-change: transform;
+}
+
+/* ─────────────────────────────────────────
+   PHASE 3 corrigée : section repliée par défaut
+   ───────────────────────────────────────── */
+.about {
+  max-height: 0;
+  overflow: hidden;
+  /* transition douce du déploiement ; max-height généreux à l'ouverture */
+  transition: max-height 0.6s cubic-bezier(.16,1,.3,1);
+}
+.about.is-open {
+  max-height: 600vh; /* largement supérieur à la hauteur réelle des 6 blocs */
+}
+
+/* ─────────────────────────────────────────
+   PHASE 4 : état initial du contenu (avant reveal GSAP)
+   ───────────────────────────────────────── */
+.about-block-inner > * {
+  opacity: 0;
+}
+/* Fallback : si GSAP absent ou reduced-motion, le contenu reste visible */
+.gsap-failed .about-block-inner > *,
+.no-anim .about-block-inner > * {
+  opacity: 1;
 }

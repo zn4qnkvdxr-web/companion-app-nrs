@@ -462,6 +462,219 @@
   /* ═══════════════════════════════════════════════════════
      INIT — séquence d'orchestration au chargement
      ═══════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════
+     SECTION À PROPOS — Phase 4 : animations GSAP scroll des blocs
+     Reveal du contenu à l'entrée + parallaxe subtile du numéro.
+     Appelé une fois la section déployée (ScrollTrigger.refresh requis).
+     ═══════════════════════════════════════════════════════════ */
+
+  function initAboutAnimations() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+      // Fallback : contenu visible sans animation
+      document.querySelectorAll('.about-block-inner > *').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+      return;
+    }
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReduced) {
+      gsap.set('.about-block-inner > *', { opacity: 1, y: 0 });
+      return;
+    }
+
+    const blocks = gsap.utils.toArray('.about-block');
+
+    blocks.forEach((block) => {
+      const num   = block.querySelector('.about-block-n');
+      const title = block.querySelector('.about-block-title');
+      const text  = block.querySelector('.about-block-text');
+      const aside = block.querySelector('.about-block-aside');
+      const items = [num, title, text, aside].filter(Boolean);
+
+      // Reveal en cascade à l'entrée du bloc
+      gsap.fromTo(items,
+        { opacity: 0, y: 28 },
+        {
+          opacity: 1, y: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+          stagger: 0.09,
+          scrollTrigger: {
+            trigger: block,
+            start: 'top 68%',
+            once: true,
+          },
+        }
+      );
+
+      // Parallaxe très subtile du gros numéro fantôme
+      if (num) {
+        gsap.to(num, {
+          y: -40,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: block,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.8,
+          },
+        });
+      }
+    });
+
+    // La section vient d'être déployée : recalcul obligatoire des positions
+    ScrollTrigger.refresh();
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     SECTION À PROPOS — Phase 3 (corrigée) : section repliée
+     ═══════════════════════════════════════════════════════════ */
+
+  function initAbout() {
+    const trigger   = document.getElementById('aboutTrigger');
+    const btn       = document.getElementById('aboutBtn');
+    const section   = document.getElementById('aboutSection');
+    const ui        = document.getElementById('aboutUI');
+    const progress  = document.getElementById('aboutProgressFill');
+    const returnBtn = document.getElementById('aboutReturn');
+    const pullHint  = document.getElementById('aboutPullHint');
+
+    if (!section || !btn) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let isOpen = false;
+    let animInit = false;
+    let pullAmount = 0;
+    const PULL_THRESHOLD = 140;
+    const PULL_MAX = 200;
+
+    function openAbout() {
+      if (isOpen) return;
+      isOpen = true;
+      ui.classList.add('is-visible');
+      ui.setAttribute('aria-hidden', 'false');
+      btn.setAttribute('aria-expanded', 'true');
+      resetPull();
+
+      // Ce qu'on fait une fois la section réellement déployée (hauteur réelle disponible)
+      const onDeployed = () => {
+        const firstBlock = section.querySelector('.about-block');
+        if (firstBlock) {
+          // scroll-behavior:smooth est actif sur <html> en CSS et intercepte même
+          // les scrollTo 'auto', provoquant une animation interrompue qui n'atteint
+          // jamais la cible. On neutralise le temps du saut, puis on restaure.
+          const root = document.documentElement;
+          const prevBehavior = root.style.scrollBehavior;
+          root.style.scrollBehavior = 'auto';
+          const targetY = firstBlock.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo(0, targetY);
+          root.style.scrollBehavior = prevBehavior;
+        }
+        if (!animInit && typeof initAboutAnimations === 'function') {
+          animInit = true;
+          setTimeout(initAboutAnimations, prefersReduced ? 0 : 120);
+        }
+      };
+
+      if (prefersReduced) {
+        section.classList.add('is-open');
+        onDeployed();
+        return;
+      }
+
+      // On écoute la fin réelle de la transition max-height (pas un délai devinée).
+      // Sécurité : fallback timer au cas où transitionend ne se déclenche pas.
+      let done = false;
+      const handleEnd = (e) => {
+        if (e && e.propertyName !== 'max-height') return;
+        if (done) return;
+        done = true;
+        section.removeEventListener('transitionend', handleEnd);
+        onDeployed();
+      };
+      section.addEventListener('transitionend', handleEnd);
+      section.classList.add('is-open'); // déclenche la transition
+      setTimeout(handleEnd, 800); // filet de sécurité
+    }
+
+    function closeAbout() {
+      if (!isOpen) return;
+      window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
+      const collapse = () => {
+        isOpen = false;
+        section.classList.remove('is-open');
+        ui.classList.remove('is-visible');
+        ui.setAttribute('aria-hidden', 'true');
+        btn.setAttribute('aria-expanded', 'false');
+        progress.style.width = '0%';
+      };
+      if (prefersReduced) { collapse(); } else { setTimeout(collapse, 500); }
+    }
+
+    function applyPull(delta) {
+      pullAmount = Math.min(PULL_MAX, pullAmount + delta * 0.5);
+      const eased = pullAmount * (1 - pullAmount / (PULL_MAX * 2.2));
+      trigger.style.transition = 'none';
+      trigger.style.transform = 'translateY(' + (-eased) + 'px)';
+      const ratio = Math.min(1, pullAmount / PULL_THRESHOLD);
+      if (pullHint) pullHint.style.opacity = String(0.4 + ratio * 0.6);
+      if (pullAmount >= PULL_THRESHOLD) { resetPull(); openAbout(); }
+    }
+
+    function resetPull() {
+      pullAmount = 0;
+      trigger.style.transition = 'transform 0.5s cubic-bezier(.16,1,.3,1)';
+      trigger.style.transform = '';
+      if (pullHint) pullHint.style.opacity = '';
+    }
+
+    function atPageBottom() {
+      return window.innerHeight + window.scrollY >= document.body.scrollHeight - 4;
+    }
+
+    function onWheel(e) {
+      if (isOpen) return;
+      if (e.deltaY > 0 && atPageBottom()) { applyPull(e.deltaY); }
+    }
+    let wheelTimer = null;
+    function onWheelReset() {
+      if (isOpen) return;
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => { if (!isOpen) resetPull(); }, 180);
+    }
+
+    let touchStartY = 0;
+    function onTouchStart(e) { touchStartY = e.touches[0].clientY; }
+    function onTouchMove(e) {
+      if (isOpen) return;
+      if (!atPageBottom()) return;
+      const dy = touchStartY - e.touches[0].clientY;
+      if (dy > 0) { applyPull(dy * 0.7); touchStartY = e.touches[0].clientY; }
+    }
+    function onTouchEnd() { if (!isOpen) resetPull(); }
+
+    function updateProgress() {
+      if (!isOpen) return;
+      const rect = section.getBoundingClientRect();
+      const total = section.offsetHeight - window.innerHeight;
+      const scrolled = Math.min(Math.max(-rect.top, 0), total);
+      progress.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
+    }
+
+    btn.addEventListener('click', openAbout);
+    returnBtn.addEventListener('click', closeAbout);
+    window.addEventListener('wheel', onWheel, { passive: true });
+    window.addEventListener('wheel', onWheelReset, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('scroll', updateProgress, { passive: true });
+  }
+
   function init() {
     initLoader();
     initTopbar();
@@ -469,6 +682,7 @@
     initGSAP();
     initTilt();
     initEasterEgg();
+    initAbout();
   }
 
   if (document.readyState === 'loading') {

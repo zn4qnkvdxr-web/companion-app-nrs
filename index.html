@@ -68,6 +68,7 @@
       </p>
       <div class="hero-meta">
         Tous profils · Tous métiers<br>
+        À conserver après la session
       </div>
     </div>
   </header>
@@ -174,7 +175,7 @@
     <div class="impact-wrap">
       <div class="impact-layout">
         <div class="impact-left">
-          <p class="impact-quote">Le rôle pose les fondations, mais le contexte et l'objectif tracent la direction.<br><br><strong>Le rôle est un bonus, pas la clé.</strong> Le rôle donne la bonne posture, mais le contexte apporte la précision.<br>Ce qui change tout : savoir où aller et pourquoi.</p>
+          <p class="impact-quote">"Agis comme un expert senior…" sans contexte ni objectif = réponse générique.<br><br><strong>Le rôle est un bonus, pas la clé.</strong> Ce qui change tout : savoir où tu veux aller et pourquoi.</p>
         </div>
         <div class="impact-right">
           <div class="i-row">
@@ -399,7 +400,7 @@
         </div>
         <div class="h-node">
           <div class="h-dot next"></div>
-          <div class="h-status next">En progression</div>
+          <div class="h-status next">Prochaine marche</div>
           <div class="h-lbl">Appels d'outils</div>
           <div class="h-desc">L'IA accède à des données externes, consulte des bases documentaires, exécute des actions réelles.</div>
         </div>
@@ -429,9 +430,124 @@
         <div class="f-dot" style="background:var(--n-blue)"></div>
         <div class="f-dot" style="background:var(--n-green)"></div>
       </div>
-      <div class="f-meta">Norsys Paris<br>Séminaire IA 2026</div>
+      <div class="f-meta">Norsys<br>Séminaire IA 2026</div>
     </div>
   </footer>
+
+  <!-- ═══════════════════════════════════════
+       SECTION À PROPOS — "Comment cette page a été conçue"
+       Placée entre le footer et l'easter egg
+  ═══════════════════════════════════════ -->
+
+  <!-- Déclencheur : bouton en fin de footer + zone de scroll élastique -->
+  <div class="about-trigger" id="aboutTrigger">
+    <button class="about-btn" id="aboutBtn" aria-expanded="false" aria-controls="aboutSection">
+      Comment cette page a été conçue
+      <span class="about-btn-arrow">↓</span>
+    </button>
+    <div class="about-pull-hint" id="aboutPullHint" aria-hidden="true">
+      <span class="about-pull-txt">ou continuez à tirer</span>
+    </div>
+  </div>
+
+  <!-- La section elle-même : 6 volets plein écran -->
+  <section class="about" id="aboutSection" aria-label="Comment cette page a été conçue">
+
+    <!-- Barre de progression fine + bouton retour fixe -->
+    <div class="about-ui" id="aboutUI" aria-hidden="true">
+      <div class="about-progress" id="aboutProgress">
+        <div class="about-progress-fill" id="aboutProgressFill"></div>
+      </div>
+      <button class="about-return" id="aboutReturn" aria-label="Revenir au contenu principal">
+        ↑ Retour
+      </button>
+    </div>
+
+    <!-- BLOC 01 -->
+    <article class="about-block" data-block="1" data-tint="1">
+      <div class="about-block-inner">
+        <span class="about-block-n">01</span>
+        <h2 class="about-block-title">Objectif</h2>
+        <p class="about-block-text">
+          Produire un companion pour le séminaire IA : un outil qui reste accessible
+          après la session, pensé pour qu'un participant y revienne et le retrouve tel quel.
+        </p>
+      </div>
+    </article>
+
+    <!-- BLOC 02 -->
+    <article class="about-block" data-block="2" data-tint="2">
+      <div class="about-block-inner">
+        <span class="about-block-n">02</span>
+        <h2 class="about-block-title">Contenu avant la forme</h2>
+        <p class="about-block-text">
+          La structure pédagogique a été posée en premier : la décomposition C01 à C06,
+          la hiérarchie d'impact, les exemples métier, l'exemple volontairement hors cadre.
+          Le design n'est venu qu'une fois ce contenu stabilisé.
+        </p>
+      </div>
+    </article>
+
+    <!-- BLOC 03 -->
+    <article class="about-block" data-block="3" data-tint="3">
+      <div class="about-block-inner">
+        <span class="about-block-n">03</span>
+        <h2 class="about-block-title">Le look and feel : itérations par référence</h2>
+        <p class="about-block-text">
+          Le style visuel s'est construit par allers-retours sur des références concrètes
+          plutôt que sur des descriptions abstraites. Plusieurs directions ont été testées
+          et écartées avant de converger vers la version actuelle — sobre, typographie
+          système, un seul accent de couleur.
+        </p>
+      </div>
+    </article>
+
+    <!-- BLOC 04 -->
+    <article class="about-block" data-block="4" data-tint="4">
+      <div class="about-block-inner">
+        <span class="about-block-n">04</span>
+        <h2 class="about-block-title">Construire en dialogue, pas en monologue</h2>
+        <p class="about-block-text">
+          Chaque évolution du site est passée par des demandes précises et des corrections
+          ciblées : un contraste insuffisant, un alignement à revoir, une couleur à recaler
+          sur l'identité Norsys. Le principe est le même que celui enseigné en session —
+          formuler, observer le résultat, affiner.
+        </p>
+      </div>
+    </article>
+
+    <!-- BLOC 05 -->
+    <article class="about-block" data-block="5" data-tint="5">
+      <div class="about-block-inner">
+        <span class="about-block-n">05</span>
+        <h2 class="about-block-title">Tester avant de livrer</h2>
+        <p class="about-block-text">
+          Chaque ajout a été vérifié avant d'être considéré comme acquis : rendu desktop
+          et mobile, parcours de navigation complet, comportement des animations,
+          accessibilité au clavier. Objectif : qu'une nouvelle fonctionnalité n'en casse
+          jamais une existante.
+        </p>
+      </div>
+    </article>
+
+    <!-- BLOC 06 -->
+    <article class="about-block" data-block="6" data-tint="6">
+      <div class="about-block-inner">
+        <span class="about-block-n">06</span>
+        <h2 class="about-block-title">Amélioration continue</h2>
+        <p class="about-block-text">
+          Le site continue d'évoluer après sa mise en ligne initiale. Chaque retour
+          déclenche une correction ciblée plutôt qu'une refonte — la même logique de
+          capitalisation qui est au cœur de la session.
+        </p>
+        <p class="about-block-aside">
+          Tiens, vous avez remarqué tous ces tirets longs — comme celui-ci ?
+          C'est un peu la signature qu'une IA n'était jamais bien loin.
+        </p>
+      </div>
+    </article>
+
+  </section>
 
   <!-- ═══════════════════════════════════════
        EASTER EGG — zone révélée au bounce scroll
