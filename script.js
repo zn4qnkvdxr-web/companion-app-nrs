@@ -538,7 +538,6 @@
     const btn       = document.getElementById('aboutBtn');
     const section   = document.getElementById('aboutSection');
     const ui        = document.getElementById('aboutUI');
-    const progress  = document.getElementById('aboutProgressFill');
     const returnBtn = document.getElementById('aboutReturn');
     const pullHint  = document.getElementById('aboutPullHint');
 
@@ -610,7 +609,6 @@
         ui.classList.remove('is-visible');
         ui.setAttribute('aria-hidden', 'true');
         btn.setAttribute('aria-expanded', 'false');
-        progress.style.width = '0%';
       };
       if (prefersReduced) { collapse(); } else { setTimeout(collapse, 500); }
     }
@@ -657,14 +655,6 @@
     }
     function onTouchEnd() { if (!isOpen) resetPull(); }
 
-    function updateProgress() {
-      if (!isOpen) return;
-      const rect = section.getBoundingClientRect();
-      const total = section.offsetHeight - window.innerHeight;
-      const scrolled = Math.min(Math.max(-rect.top, 0), total);
-      progress.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
-    }
-
     btn.addEventListener('click', openAbout);
     returnBtn.addEventListener('click', closeAbout);
     window.addEventListener('wheel', onWheel, { passive: true });
@@ -672,7 +662,6 @@
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: true });
     window.addEventListener('touchend', onTouchEnd, { passive: true });
-    window.addEventListener('scroll', updateProgress, { passive: true });
   }
 
   function init() {

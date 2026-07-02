@@ -1171,35 +1171,18 @@ body {
 }
 
 /* ─────────────────────────────────────────
-   UI PERSISTANTE (progression + retour)
+   UI PERSISTANTE (bouton retour)
    ───────────────────────────────────────── */
 .about-ui {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 50px; /* sous la topbar (42px) + petite marge */
   right: 0;
-  z-index: 60;
+  z-index: 40; /* sous la topbar (z-index 50) pour éviter tout chevauchement */
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 14px var(--pad-x);
-  pointer-events: none; /* les enfants réactivent au besoin */
-}
-
-/* Barre de progression fine */
-.about-progress {
-  flex: 1;
-  height: 2px;
-  background: rgba(13,13,13,0.12);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.about-progress-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--t1);
-  border-radius: 2px;
-  transition: width 0.15s linear;
+  justify-content: flex-end;
+  padding: 0 var(--pad-x);
+  pointer-events: none; /* le bouton réactive au besoin */
 }
 
 /* Bouton retour fixe */
@@ -1234,7 +1217,7 @@ body {
 /* ─────────────────────────────────────────
    PHASE 3 : états d'ouverture
    ───────────────────────────────────────── */
-/* UI (progression + retour) masquée par défaut, révélée à l'ouverture */
+/* UI (bouton retour) masquée par défaut, révélée à l'ouverture */
 .about-ui {
   opacity: 0;
   transform: translateY(-8px);
